@@ -1,12 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// This is your Prisma schema file converted to PostgreSQL
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -31,12 +30,12 @@ model Shop {
   zipCode     String?
   phone       String?
   email       String?
-  latitude    Float?   // For location-based search
-  longitude   Float?   // For location-based search
-  imageUrl    String?  // Shop image/logo
+  latitude    Float?
+  longitude   Float?
+  imageUrl    String?
   rating      Float    @default(0)
   isActive    Boolean  @default(true)
-  barberId    Int      @unique // One shop per barber
+  barberId    Int      @unique
   barber      User     @relation("BarberShop", fields: [barberId], references: [id], onDelete: Cascade)
   services    Service[]
   createdAt   DateTime @default(now())
@@ -45,10 +44,10 @@ model Shop {
 
 model Service {
   id          Int      @id @default(autoincrement())
-  name        String   // e.g., "Haircut", "Beard Trim"
+  name        String
   description String?
   price       Float
-  duration    Int      // Duration in minutes
+  duration    Int
   shopId      Int
   shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
