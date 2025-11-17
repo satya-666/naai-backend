@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("customer") // 'customer' or 'barber'
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shop      Shop?    @relation("BarberShop")
+}
+
+model Shop {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  address     String
+  city        String
+  state       String?
+  zipCode     String?
+  phone       String?
+  email       String?
+  latitude    Float?   // For location-based search
+  longitude   Float?   // For location-based search
+  imageUrl    String?  // Shop image/logo
+  rating      Float    @default(0)
+  isActive    Boolean  @default(true)
+  barberId    Int      @unique // One shop per barber
+  barber      User     @relation("BarberShop", fields: [barberId], references: [id], onDelete: Cascade)
+  services    Service[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String   // e.g., "Haircut", "Beard Trim"
+  description String?
+  price       Float
+  duration    Int      // Duration in minutes
+  shopId      Int
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
